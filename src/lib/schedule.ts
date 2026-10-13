@@ -50,6 +50,7 @@ export interface WeeklySchedule {
 export function displayName(name: string): string {
   return name
     .replace(/\s*-?\s*\d{4} Season(?: \d+)?/g, '')
+    .replace(/\s*-\s*(?=(?:Asia|Europe|Americas?)\b)/, ' - ')
     .replace(/\s+by .+?(?=\s+-\s|$)/, '')
     .trim();
 }
