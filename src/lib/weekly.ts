@@ -51,14 +51,17 @@ export async function loadCatalog(env: WeeklyEnv): Promise<SeriesInfo[] | null> 
 
 export function formatThisWeek(schedule: WeeklySchedule): string {
   const header = [`# ${schedule.season}`, `## Week ${schedule.week} · ${formatWeekRange(schedule.start)}`].filter(Boolean).join('\n');
-  const lines = schedule.entries.map((entry) => `**${entry.series}**: ${[entry.track, entry.length].filter(Boolean).join(' · ')}`);
 
-  let content = `${header}\n\n`;
-  for (const line of lines) {
-    if (content.length + line.length + 1 > MAX_MESSAGE_LENGTH) break;
-    content += `${line}\n`;
+  let content = header;
+  let category = '';
+  for (const entry of schedule.entries) {
+    const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
+    const line = `\n**${entry.series}**: ${[entry.track, entry.length].filter(Boolean).join(' · ')}`;
+    if (content.length + heading.length + line.length > MAX_MESSAGE_LENGTH) break;
+    category = entry.category;
+    content += heading + line;
   }
-  return content.trimEnd();
+  return content;
 }
 
 async function postThisWeek(env: WeeklyEnv, config: GuildConfig, schedule: WeeklySchedule): Promise<void> {

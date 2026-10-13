@@ -7,7 +7,10 @@ const TRACK_COLUMN_MIN_X = 143;
 const TRACK_COLUMN_MAX_X = 300;
 const LENGTH_COLUMN_MIN_X = 500;
 
+const CATEGORY_ORDER = ['Sports Car', 'Formula Car', 'Oval', 'Dirt Oval', 'Dirt Road', 'Unranked'];
+
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
+const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
 const RACE_TIME_PATTERN = /^\(\d{4}-\d{2}-\d{2} /;
 const TOC_LEADER_PATTERN = /\.\s\./;
 const SERIES_TITLE_PATTERN = /\d{4} Season/;
@@ -28,11 +31,13 @@ interface SeriesWeek {
 
 export interface SeriesSchedule {
   name: string;
+  category: string;
   weeks: SeriesWeek[];
 }
 
 export interface WeeklyEntry {
   name: string;
+  category: string;
   series: string;
   week: number;
   start: number;
@@ -45,6 +50,10 @@ export interface WeeklySchedule {
   week: number;
   start: number;
   entries: WeeklyEntry[];
+}
+
+function titleCase(value: string): string {
+  return value.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
 }
 
 export function displayName(name: string): string {
@@ -81,14 +90,21 @@ async function fetchPdfPages(): Promise<PdfItem[][]> {
 
 export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
   const all: SeriesSchedule[] = [];
+  let category = 'Other';
   let current: SeriesSchedule | undefined;
 
   for (const page of pages) {
     const items = page.filter((item) => !TOC_LEADER_PATTERN.test(item.text)).sort((a, b) => b.y - a.y || a.x - b.x);
 
     for (const [index, item] of items.entries()) {
+      const divider = item.text.match(DIVIDER_PATTERN);
+      if (divider) {
+        category = titleCase(divider[1]);
+        continue;
+      }
+
       if (item.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(item.text) && !WEEK_PATTERN.test(item.text)) {
-        current = { name: item.text, weeks: [] };
+        current = { name: item.text, category, weeks: [] };
         all.push(current);
         continue;
       }
@@ -119,10 +135,16 @@ export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now:
     const current = series.weeks.find((entry) => entry.start <= now.getTime() && now.getTime() < entry.start + WEEK_MS);
     if (!current?.track) continue;
 
-    entries.push({ name: series.name, series: displayName(series.name), ...current });
+    entries.push({ name: series.name, category: series.category, series: displayName(series.name), ...current });
   }
 
   if (entries.length === 0) return undefined;
+
+  const rank = (category: string) => {
+    const index = CATEGORY_ORDER.indexOf(category);
+    return index === -1 ? CATEGORY_ORDER.length : index;
+  };
+  entries.sort((a, b) => rank(a.category) - rank(b.category));
 
   const season = all.map((series) => series.name.match(SEASON_LABEL_PATTERN)?.[0]).find(Boolean) ?? '';
   return { season, week: entries[0].week, start: entries[0].start, entries };
