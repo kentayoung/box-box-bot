@@ -11,3 +11,6 @@ binding = "CONFIG"
 
 [triggers]
 crons = ["5 0 * * 2,3"]
+
+[observability]
+enabled = true

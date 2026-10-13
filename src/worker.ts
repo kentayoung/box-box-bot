@@ -18,6 +18,8 @@ export interface Env {
   CONFIG: KVNamespace;
 }
 
+const DEADLINE_MS = 25_000;
+
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
     headers: { 'content-type': 'application/json' },
@@ -41,11 +43,43 @@ function extractCustId(options: DiscordCommandOption[] | undefined): number | un
 }
 
 async function editOriginalResponse(applicationId: string, token: string, content: string): Promise<void> {
-  await fetch(`https://discord.com/api/v10/webhooks/${applicationId}/${token}/messages/@original`, {
-    method: 'PATCH',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ content }),
+  try {
+    const response = await fetch(`https://discord.com/api/v10/webhooks/${applicationId}/${token}/messages/@original`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ content }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) {
+      console.error(`editing the original response failed with ${response.status}: ${await response.text()}`);
+    }
+  } catch (err) {
+    console.error('editing the original response failed:', err);
+  }
+}
+
+async function runDeferred(interaction: DiscordInteraction, handler: () => Promise<void>): Promise<void> {
+  const name = interaction.data?.name ?? 'unknown';
+  const started = Date.now();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<'timeout'>((resolve) => {
+    timer = setTimeout(() => resolve('timeout'), DEADLINE_MS);
   });
+
+  try {
+    const result = await Promise.race([handler().then(() => 'done' as const), deadline]);
+    if (result === 'timeout') {
+      console.error(`${name} still running after ${DEADLINE_MS}ms, replying with a timeout message`);
+      await editOriginalResponse(interaction.application_id, interaction.token, 'That took too long. Try again in a bit.');
+    } else {
+      console.log(`${name} finished in ${Date.now() - started}ms`);
+    }
+  } catch (err) {
+    console.error(`${name} failed after ${Date.now() - started}ms:`, err);
+    await editOriginalResponse(interaction.application_id, interaction.token, 'Something went wrong. Try again in a bit.');
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function handleBoxBox(interaction: DiscordInteraction, env: Env): Promise<void> {
@@ -146,19 +180,19 @@ export default {
 
     if (interaction.type === InteractionType.APPLICATION_COMMAND) {
       if (interaction.data?.name === boxBoxCommand.name) {
-        ctx.waitUntil(handleBoxBox(interaction, env));
+        ctx.waitUntil(runDeferred(interaction, () => handleBoxBox(interaction, env)));
         return jsonResponse({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
       }
       if (interaction.data?.name === statsCommand.name) {
-        ctx.waitUntil(handleStats(interaction));
+        ctx.waitUntil(runDeferred(interaction, () => handleStats(interaction)));
         return jsonResponse({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
       }
       if (interaction.data?.name === trackInsightsCommand.name) {
-        ctx.waitUntil(handleTrackInsights(interaction, env));
+        ctx.waitUntil(runDeferred(interaction, () => handleTrackInsights(interaction, env)));
         return jsonResponse({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
       }
       if (interaction.data?.name === weeklyCommand.name) {
-        ctx.waitUntil(handleWeekly(interaction, env, (content) => editOriginalResponse(interaction.application_id, interaction.token, content)));
+        ctx.waitUntil(runDeferred(interaction, () => handleWeekly(interaction, env, (content) => editOriginalResponse(interaction.application_id, interaction.token, content))));
         return jsonResponse({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE, data: { flags: 64 } });
       }
     }
