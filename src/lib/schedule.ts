@@ -9,12 +9,9 @@ const LENGTH_COLUMN_MIN_X = 500;
 
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
 const RACE_TIME_PATTERN = /^\(\d{4}-\d{2}-\d{2} /;
-const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
 const TOC_LEADER_PATTERN = /\.\s\./;
 const SERIES_TITLE_PATTERN = /\d{4} Season/;
 const SEASON_LABEL_PATTERN = /\d{4} Season \d+/;
-const LICENSE_SUFFIX_PATTERN = /\s+\S+\s+\d\.\d\s*-->.*$|\s+Every .*$/;
-const CAR_LIST_END_PATTERN = /^(Class |Races |Min entries|Penalty|Forecast|Week )/;
 
 interface PdfItem {
   text: string;
@@ -31,14 +28,12 @@ interface SeriesWeek {
 
 export interface SeriesSchedule {
   name: string;
-  cars: string;
   weeks: SeriesWeek[];
 }
 
 export interface WeeklyEntry {
   name: string;
   series: string;
-  cars: string;
   week: number;
   start: number;
   track: string;
@@ -86,36 +81,19 @@ async function fetchPdfPages(): Promise<PdfItem[][]> {
 export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
   const all: SeriesSchedule[] = [];
   let current: SeriesSchedule | undefined;
-  let readingCars = false;
 
   for (const page of pages) {
     const items = page.filter((item) => !TOC_LEADER_PATTERN.test(item.text)).sort((a, b) => b.y - a.y || a.x - b.x);
 
     for (const [index, item] of items.entries()) {
-      if (DIVIDER_PATTERN.test(item.text)) {
-        readingCars = false;
-        continue;
-      }
-
       if (item.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(item.text) && !WEEK_PATTERN.test(item.text)) {
-        current = { name: item.text, cars: '', weeks: [] };
+        current = { name: item.text, weeks: [] };
         all.push(current);
-        readingCars = true;
         continue;
-      }
-
-      if (readingCars && current && item.x < TITLE_COLUMN_MAX_X) {
-        if (CAR_LIST_END_PATTERN.test(item.text)) {
-          readingCars = false;
-        } else {
-          current.cars = `${current.cars} ${item.text}`.trim();
-          continue;
-        }
       }
 
       const week = item.text.match(WEEK_PATTERN);
       if (!week || !current) continue;
-      readingCars = false;
 
       const track: string[] = [];
       let length = '';
@@ -128,12 +106,7 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
     }
   }
 
-  return all
-    .filter((series) => series.weeks.length > 0)
-    .map((series) => ({
-      ...series,
-      cars: series.cars.replace(LICENSE_SUFFIX_PATTERN, '').replace(/^See race week.*$/, ''),
-    }));
+  return all.filter((series) => series.weeks.length > 0);
 }
 
 export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now: Date): WeeklySchedule | undefined {
@@ -145,7 +118,7 @@ export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now:
     const current = series.weeks.find((entry) => entry.start <= now.getTime() && now.getTime() < entry.start + WEEK_MS);
     if (!current?.track) continue;
 
-    entries.push({ name: series.name, series: displayName(series.name), cars: series.cars, ...current });
+    entries.push({ name: series.name, series: displayName(series.name), ...current });
   }
 
   if (entries.length === 0) return undefined;

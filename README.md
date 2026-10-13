@@ -37,53 +37,34 @@ Free plan covers this comfortably at zero cost.
 
 ## Weekly posts
 
-`/weekly` (Manage Server only) sets up automatic weekly posts:
+`/weekly` (Manage Server only) keeps this week's iRacing tracks posted in a
+channel:
 
-- `/weekly add series:<pick> guide:<bool> car:<pick>` tracks a series in the
-  this-week list. `series` and `car` are autocomplete dropdowns of real iRacing
-  series and that series' cars. Track guide posts are off by default; pass
-  `guide:True` to also get a weekly guide for that series. `car` (guide only)
-  sets what the guide is titled after and what its YouTube links search for.
-  Add the same series again with another car to get a guide per car. Guides
-  need a forum set with `/weekly channels` first.
-- `/weekly refresh` updates the posts right now. `force:True` also reposts guides already posted this week, such as one you deleted.
+- `/weekly add series:<pick>` adds a series. `series` is an autocomplete
+  dropdown of real iRacing series.
 - `/weekly remove`, `/weekly list` and `/weekly stop` manage what's tracked.
-- `/weekly channels this_week_channel:<channel> track_guides_channel:<forum>`
-  sets where posts go. Either one is optional on its own.
+- `/weekly channel channel:<channel>` sets where the post goes.
+- `/weekly refresh` updates the post right now.
 
 The dropdowns read a cached series list in KV, refreshed by the weekly cron
 and by `/weekly add`. The very first autocomplete after deploy may come back
 empty while it fills the cache.
 
-**`this_week_channel`** gets one message per week: season, week number and
-date range, then a line per series with the track and race length. It's
-edited in place during the week and a new message is posted when the week
-rolls over.
-
-**`track_guides_channel`** (a forum) gets one post each week per series added with `guide:True`, titled
-`Track · Car` (or `Track · Series` when no car was picked and the series has several), with
-series, week, race length, car, Gemini track tips and YouTube search links.
-If `YOUTUBE_CHANNELS` (comma-separated `@handles`, set in `wrangler.toml`
-`[vars]`) is set, each guide also links to a search of each of those channels
-for the track and car. These are search pages, not specific videos, so there's
-no YouTube API key or quota involved. The generic YouTube search links stay.
-Tags whose name appears in the series or car name are applied. If the forum
-requires a tag and none match, the first tag is used. Posts for the same track
-and car are only made once per week.
+The channel gets one message per week: season, week number and date range,
+then a line per series with the track and race length. It's edited in place
+during the week and a new message is posted when the week rolls over.
 
 A Cron Trigger runs Tuesday and Wednesday at 00:05 UTC: iRacing's week rolls
 over Tuesday 00:00 UTC, and Wednesday is a retry in case the new season's PDF
 isn't published yet. Runs are idempotent. Per-server settings live in a
 Workers KV namespace bound as `CONFIG` (wrangler creates it on first deploy).
-The bot needs **View Channel**, **Send Messages**, **Embed Links** in the
-this-week channel and **View Channel**, **Send Messages**,
-**Send Messages in Threads** and **Create Posts** in the forum.
+The bot needs **View Channel** and **Send Messages** in the channel.
 
 Data comes straight from iRacing's public
 [season schedule PDF](https://members-assets.iracing.com/public/schedulepdf/SeasonSchedule.pdf),
 parsed in the Worker with `unpdf` (no iRacing login needed). The PDF has no
 machine-readable format, so parsing depends on its current layout. If
-iRacing redesigns it, posts could come out empty or wrong until
+iRacing redesigns it, the post could come out empty or wrong until
 `parseSchedule` in `src/lib/schedule.ts` is adjusted. Heat-based dirt
 series don't list a race length in the PDF, so that part is left out.
 
@@ -135,8 +116,7 @@ either if you've also upgraded Node.
 | `DISCORD_CLIENT_ID` | `deploy-commands` (Node) | application ID |
 | `DISCORD_GUILD_ID` | `deploy-commands` (Node) | optional, dev-only; guild-scoped registration when set, global when unset |
 | `DISCORD_PUBLIC_KEY` | Worker | verifies incoming interaction requests are really from Discord |
-| `DISCORD_TOKEN` | Worker | same bot token, used to post the weekly schedule and guides |
-| `YOUTUBE_CHANNELS` | Worker (optional) | comma-separated channel handles (e.g. `@name1, @name2`), set in `wrangler.toml` `[vars]` |
+| `DISCORD_TOKEN` | Worker | same bot token, used to post the weekly schedule |
 | `GEMINI_API_KEY` | Worker | free tier via [Google AI Studio](https://aistudio.google.com/apikey) |
 | `GEMINI_MODEL` | Worker | set in `wrangler.toml` `[vars]`, defaults to `gemini-3.1-flash-lite` — a lite model was chosen deliberately for its much higher free-tier request quota than newer flagship Flash models. Google has repeatedly retired free-tier model IDs out from under existing code (this is the third default we've had to change) — if pep talks start 404ing, check [Google AI Studio](https://aistudio.google.com/) for a current model ID |
 

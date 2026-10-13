@@ -2,7 +2,6 @@ export const ApplicationCommandOptionType = {
   SUB_COMMAND: 1,
   STRING: 3,
   INTEGER: 4,
-  BOOLEAN: 5,
   CHANNEL: 7,
 } as const;
 
@@ -18,12 +17,11 @@ export interface PepTalkInput {
 export const ChannelType = {
   GUILD_TEXT: 0,
   GUILD_ANNOUNCEMENT: 5,
-  GUILD_FORUM: 15,
 } as const;
 
 export interface DiscordCommandOption {
   name: string;
-  value?: string | number | boolean;
+  value?: string | number;
   focused?: boolean;
   options?: DiscordCommandOption[];
 }

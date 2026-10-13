@@ -5,7 +5,6 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 GEMINI_MODEL = "gemini-3.1-flash-lite"
-YOUTUBE_CHANNELS = "@HYMOAcademy, @Sambo_iRacing"
 
 [[kv_namespaces]]
 binding = "CONFIG"
