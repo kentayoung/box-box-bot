@@ -4,6 +4,7 @@ import { buildWeeklySchedule, displayName, formatWeekRange, loadSchedule, type S
 const CONFIG_PREFIX = 'guild:';
 const CATALOG_KEY = 'catalog';
 const MAX_MESSAGE_LENGTH = 2000;
+const MAX_CARS_LENGTH = 200;
 
 export interface SeriesInfo {
   name: string;
@@ -49,6 +50,28 @@ export async function loadCatalog(env: WeeklyEnv): Promise<SeriesInfo[] | null> 
   return env.CONFIG.get<SeriesInfo[]>(CATALOG_KEY, 'json');
 }
 
+function commonClass(cars: string[]): string {
+  const [first, ...rest] = cars.map((car) => car.split(/[\s.]+/).filter((token) => /[A-Za-z0-9]/.test(token)));
+  const shared = first.filter((token) => rest.every((tokens) => tokens.includes(token)));
+  const label = shared.join(' ');
+  return /[A-Za-z]/.test(label) && label.length >= 3 ? label : '';
+}
+
+export function formatCars(cars: string): string {
+  const all = cars.split(/,\s*/);
+  const label = all.length > 1 ? commonClass(all) : '';
+  if (label) return label;
+
+  const shown: string[] = [];
+  let length = 0;
+  for (const car of all) {
+    if (shown.length > 0 && length + car.length > MAX_CARS_LENGTH) break;
+    shown.push(car);
+    length += car.length + 2;
+  }
+  return all.length > shown.length ? `${shown.join(', ')} +${all.length - shown.length} more` : shown.join(', ');
+}
+
 export function formatThisWeek(schedule: WeeklySchedule): string {
   const header = [`# ${schedule.season}`, `## Week ${schedule.week} · ${formatWeekRange(schedule.start)}`].filter(Boolean).join('\n');
 
@@ -56,7 +79,8 @@ export function formatThisWeek(schedule: WeeklySchedule): string {
   let category = '';
   for (const entry of schedule.entries) {
     const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
-    const line = `\n**${entry.series}**: ${[entry.track, entry.length].filter(Boolean).join(' · ')}`;
+    const cars = entry.cars ? `\n-# ${formatCars(entry.cars)}` : '';
+    const line = `\n**${entry.series}**: ${[entry.track, entry.length].filter(Boolean).join(' · ')}${cars}`;
     if (content.length + heading.length + line.length > MAX_MESSAGE_LENGTH) break;
     category = entry.category;
     content += heading + line;

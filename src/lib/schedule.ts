@@ -11,6 +11,7 @@ const CATEGORY_ORDER = ['Sports Car', 'Formula Car', 'Oval', 'Dirt Oval', 'Dirt 
 
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
 const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
+const WEEKLY_CARS_PATTERN = /^See race week for cars/;
 const RACE_TIME_PATTERN = /^\(\d{4}-\d{2}-\d{2} /;
 const TOC_LEADER_PATTERN = /\.\s\./;
 const SERIES_TITLE_PATTERN = /\d{4} Season/;
@@ -26,12 +27,14 @@ interface SeriesWeek {
   week: number;
   start: number;
   track: string;
+  cars: string;
   length: string;
 }
 
 export interface SeriesSchedule {
   name: string;
   category: string;
+  weeklyCars: boolean;
   weeks: SeriesWeek[];
 }
 
@@ -42,6 +45,7 @@ export interface WeeklyEntry {
   week: number;
   start: number;
   track: string;
+  cars: string;
   length: string;
 }
 
@@ -104,8 +108,13 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
       }
 
       if (item.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(item.text) && !WEEK_PATTERN.test(item.text)) {
-        current = { name: item.text, category, weeks: [] };
+        current = { name: item.text, category, weeklyCars: false, weeks: [] };
         all.push(current);
+        continue;
+      }
+
+      if (current && item.x < TITLE_COLUMN_MAX_X && WEEKLY_CARS_PATTERN.test(item.text)) {
+        current.weeklyCars = true;
         continue;
       }
 
@@ -119,7 +128,8 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
         if (next.x >= TRACK_COLUMN_MIN_X && next.x < TRACK_COLUMN_MAX_X) track.push(next.text);
         if (next.x >= LENGTH_COLUMN_MIN_X && Math.abs(next.y - item.y) < 2) length = formatLength(next.text);
       }
-      current.weeks.push({ week: Number(week[1]), start: Date.parse(`${week[2]}T00:00:00Z`), track: track.join(' '), length });
+      const [trackName, ...cars] = current.weeklyCars ? track : [track.join(' ')];
+      current.weeks.push({ week: Number(week[1]), start: Date.parse(`${week[2]}T00:00:00Z`), track: trackName ?? '', cars: cars.join(' '), length });
     }
   }
 
