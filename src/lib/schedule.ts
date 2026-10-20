@@ -5,7 +5,6 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const TITLE_COLUMN_MAX_X = 100;
 const TRACK_COLUMN_MIN_X = 143;
 const TRACK_COLUMN_MAX_X = 300;
-const LENGTH_COLUMN_MIN_X = 500;
 
 const CATEGORY_ORDER = ['Sports Car', 'Formula Car', 'Oval', 'Dirt Oval', 'Dirt Road', 'Unranked'];
 
@@ -28,7 +27,6 @@ interface SeriesWeek {
   start: number;
   track: string;
   cars: string;
-  length: string;
 }
 
 export interface SeriesSchedule {
@@ -46,7 +44,6 @@ export interface WeeklyEntry {
   start: number;
   track: string;
   cars: string;
-  length: string;
 }
 
 export interface WeeklySchedule {
@@ -66,11 +63,6 @@ export function displayName(name: string): string {
     .replace(/\s*-\s*(?=(?:Asia|Europe|Americas?)\b)/, ' - ')
     .replace(/\s+by .+?(?=\s+-\s|$)/, '')
     .trim();
-}
-
-function formatLength(text: string): string {
-  if (/^\d+$/.test(text)) return `${text} min`;
-  return /^\d+ (mins?|laps?)$/.test(text) ? text.replace('mins', 'min') : '';
 }
 
 async function fetchPdfPages(): Promise<PdfItem[][]> {
@@ -122,14 +114,12 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
       if (!week || !current) continue;
 
       const track: string[] = [];
-      let length = '';
       for (const next of items.slice(index + 1)) {
         if (RACE_TIME_PATTERN.test(next.text) || WEEK_PATTERN.test(next.text)) break;
         if (next.x >= TRACK_COLUMN_MIN_X && next.x < TRACK_COLUMN_MAX_X) track.push(next.text);
-        if (next.x >= LENGTH_COLUMN_MIN_X && Math.abs(next.y - item.y) < 2) length = formatLength(next.text);
       }
       const [trackName, ...cars] = current.weeklyCars ? track : [track.join(' ')];
-      current.weeks.push({ week: Number(week[1]), start: Date.parse(`${week[2]}T00:00:00Z`), track: trackName ?? '', cars: cars.join(' '), length });
+      current.weeks.push({ week: Number(week[1]), start: Date.parse(`${week[2]}T00:00:00Z`), track: trackName ?? '', cars: cars.join(' ') });
     }
   }
 

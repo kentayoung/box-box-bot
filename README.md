@@ -51,7 +51,7 @@ and by `/weekly add`. The very first autocomplete after deploy may come back
 empty while it fills the cache.
 
 The channel gets one message per week: season, week number and date range,
-then a line per series with the track and race length. It's edited in place
+then a line per series with the track. It's edited in place
 during the week and a new message is posted when the week rolls over.
 
 A Cron Trigger runs Tuesday and Wednesday at 00:05 UTC: iRacing's week rolls
@@ -65,8 +65,7 @@ Data comes straight from iRacing's public
 parsed in the Worker with `unpdf` (no iRacing login needed). The PDF has no
 machine-readable format, so parsing depends on its current layout. If
 iRacing redesigns it, the post could come out empty or wrong until
-`parseSchedule` in `src/lib/schedule.ts` is adjusted. Heat-based dirt
-series don't list a race length in the PDF, so that part is left out.
+`parseSchedule` in `src/lib/schedule.ts` is adjusted.
 
 Test the cron locally with `npx wrangler dev --test-scheduled` and hit
 `/__scheduled`.
