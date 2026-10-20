@@ -79,8 +79,8 @@ export function formatThisWeek(schedule: WeeklySchedule): string {
   let category = '';
   for (const entry of schedule.entries) {
     const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
-    const cars = entry.cars ? `\n-# ${formatCars(entry.cars)}` : '';
-    const line = `\n**${entry.series}**: ${[entry.track, entry.length].filter(Boolean).join(' · ')}${cars}`;
+    const details = [entry.track, entry.length, entry.cars && `***${formatCars(entry.cars)}***`].filter(Boolean).join(' · ');
+    const line = `\n**${entry.series}**: ${details}`;
     if (content.length + heading.length + line.length > MAX_MESSAGE_LENGTH) break;
     category = entry.category;
     content += heading + line;
