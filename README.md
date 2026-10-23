@@ -1,6 +1,6 @@
 # iRacing Discord Bot
 
-A Discord bot with three commands:
+A Discord bot with four commands:
 
 - **`/box-box`** — talks shit and hypes you up before your iRacing race. Tell
   it your name, track, series/car, mood, and any extra context, and Gemini
@@ -14,8 +14,11 @@ A Discord bot with three commands:
   Links are constructed search queries, not specific videos — AI models
   reliably hallucinate broken/wrong video URLs, so this sidesteps that
   entirely by always linking to a real search results page instead.
+- **`/weekly`** — posts this week's tracks for the series you pick (see
+  [Weekly posts](#weekly-posts)).
 
-All three commands are stateless — nothing is stored between invocations.
+The first three commands are stateless. Only `/weekly` stores anything, its
+per-server settings in Workers KV.
 
 ## A note on data sources
 
@@ -51,8 +54,11 @@ and by `/weekly add`. The very first autocomplete after deploy may come back
 empty while it fills the cache.
 
 The channel gets one message per week: season, week number and date range,
-then a line per series with the track. It's edited in place
-during the week and a new message is posted when the week rolls over.
+then the tracked series grouped under their category (Sports Car, Formula Car,
+Oval and so on), one line per series with the track. Series that run different
+cars each week also show the cars, shortened to a class like GT3 when every car
+shares one. The message is edited in place during the week and a new message is
+posted when the week rolls over.
 
 A Cron Trigger runs Tuesday and Wednesday at 00:05 UTC: iRacing's week rolls
 over Tuesday 00:00 UTC, and Wednesday is a retry in case the new season's PDF
