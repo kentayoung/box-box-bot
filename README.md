@@ -1,4 +1,4 @@
-# iRacing Discord Bot
+# Box Box Bot
 
 A Discord bot with four commands:
 
