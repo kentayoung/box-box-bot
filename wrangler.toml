@@ -10,7 +10,7 @@ GEMINI_MODEL = "gemini-3.1-flash-lite"
 binding = "CONFIG"
 
 [triggers]
-crons = ["5 0 * * 2,3"]
+crons = ["0 16,17 * * 1"]
 
 [observability]
 enabled = true
