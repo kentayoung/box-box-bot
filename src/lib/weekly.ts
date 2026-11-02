@@ -5,6 +5,7 @@ const CONFIG_PREFIX = 'guild:';
 const CATALOG_KEY = 'catalog';
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_CARS_LENGTH = 200;
+const LOOKAHEAD_MS = 24 * 60 * 60 * 1000;
 
 export interface SeriesInfo {
   name: string;
@@ -108,7 +109,7 @@ async function postThisWeek(env: WeeklyEnv, config: GuildConfig, schedule: Weekl
 }
 
 export async function syncGuild(env: WeeklyEnv, guildId: string, config: GuildConfig, all: SeriesSchedule[], now = new Date()): Promise<WeeklySchedule | undefined> {
-  const schedule = buildWeeklySchedule(all, config.series, now);
+  const schedule = buildWeeklySchedule(all, config.series, new Date(now.getTime() + LOOKAHEAD_MS));
   if (!schedule) {
     console.log(`guild ${guildId}: no tracked series has a current week, leaving channels untouched`);
     return undefined;

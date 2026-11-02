@@ -205,7 +205,9 @@ export default {
     return new Response('Unknown interaction', { status: 400 });
   },
 
-  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    const hour = new Intl.DateTimeFormat('en-US', { hour: 'numeric', hourCycle: 'h23', timeZone: 'America/Denver' }).format(controller.scheduledTime);
+    if (hour !== '10') return;
     ctx.waitUntil(
       syncAllGuilds(env).catch((err) => {
         console.error('weekly sync failed:', err);

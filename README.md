@@ -60,9 +60,14 @@ cars each week also show the cars, shortened to a class like GT3 when every car
 shares one. The message is edited in place during the week and a new message is
 posted when the week rolls over.
 
-A Cron Trigger runs Tuesday and Wednesday at 00:05 UTC: iRacing's week rolls
-over Tuesday 00:00 UTC, and Wednesday is a retry in case the new season's PDF
-isn't published yet. Runs are idempotent. Per-server settings live in a
+A Cron Trigger posts the coming week's tracks every Monday at 10:00 AM Mountain
+time. Cron runs in UTC, so it fires at both 16:00 and 17:00 UTC and the Worker
+only acts on the run that lands at 10 AM in `America/Denver`, which keeps the
+time right across daylight saving. iRacing's week rolls over Tuesday 00:00 UTC,
+so Monday morning's post shows the week that starts that evening, and
+`/weekly refresh` switches to that week from Sunday 6 PM Mountain on. If the new
+season's PDF isn't published yet the post is left alone until the next
+Monday. Runs are idempotent. Per-server settings live in a
 Workers KV namespace bound as `CONFIG` (wrangler creates it on first deploy).
 The bot needs **View Channel** and **Send Messages** in the channel.
 
@@ -74,7 +79,8 @@ iRacing redesigns it, the post could come out empty or wrong until
 `parseSchedule` in `src/lib/schedule.ts` is adjusted.
 
 Test the cron locally with `npx wrangler dev --test-scheduled` and hit
-`/__scheduled`.
+`/__scheduled`. The run is skipped unless it is currently 10 AM Mountain, so
+temporarily remove the hour check in `src/worker.ts` to force it.
 
 ## 1. Discord Developer Portal Setup
 
