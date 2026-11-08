@@ -51,6 +51,22 @@ export async function loadCatalog(env: WeeklyEnv): Promise<SeriesInfo[] | null> 
   return env.CONFIG.get<SeriesInfo[]>(CATALOG_KEY, 'json');
 }
 
+const CAR_CLASSES: [RegExp, string][] = [
+  [/GTP|Hybrid V8/, 'GTP'],
+  [/499P|LMH/, 'LMH'],
+  [/P217/, 'P217'],
+  [/P320/, 'P320'],
+  [/GT3/, 'GT3'],
+  [/GT4/, 'GT4'],
+  [/GTE/, 'GTE'],
+  [/TCR/, 'TCR'],
+];
+
+function groupByClass(cars: string[]): string[] {
+  const grouped = cars.map((car) => CAR_CLASSES.find(([pattern]) => pattern.test(car))?.[1] ?? car);
+  return [...new Set(grouped)];
+}
+
 function commonClass(cars: string[]): string {
   const [first, ...rest] = cars.map((car) => car.split(/[\s.]+/).filter((token) => /[A-Za-z0-9]/.test(token)));
   const shared = first.filter((token) => rest.every((tokens) => tokens.includes(token)));
@@ -62,6 +78,9 @@ export function formatCars(cars: string): string {
   const all = cars.split(/,\s*/);
   const label = all.length > 1 ? commonClass(all) : '';
   if (label) return label;
+
+  const grouped = groupByClass(all);
+  if (grouped.length < all.length) return grouped.join(', ');
 
   const shown: string[] = [];
   let length = 0;
