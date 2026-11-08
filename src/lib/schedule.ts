@@ -1,13 +1,16 @@
 import { getDocumentProxy } from 'unpdf';
 
 const SCHEDULE_PDF_URL = 'https://members-assets.iracing.com/public/schedulepdf/SeasonSchedule.pdf';
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const WEEK_MS = 7 * DAY_MS;
+const FIRST_TUESDAY_MS = 5 * DAY_MS;
 const TITLE_COLUMN_MAX_X = 100;
 const TRACK_COLUMN_MIN_X = 143;
 const TRACK_COLUMN_MAX_X = 300;
 
-const CATEGORY_ORDER = ['Sports Car', 'Formula Car', 'Oval', 'Dirt Oval', 'Dirt Road', 'Unranked'];
+const CATEGORY_ORDER = ['Sports Car', 'Endurance', 'Formula Car', 'Oval', 'Dirt Oval', 'Dirt Road', 'Unranked'];
 
+const ENDURANCE_PATTERN = /endurance/i;
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
 const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
 const WEEKLY_CARS_PATTERN = /^See race week for cars/;
@@ -128,14 +131,16 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
 
 export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now: Date): WeeklySchedule | undefined {
   const entries: WeeklyEntry[] = [];
+  const weekStart = Math.floor((now.getTime() - FIRST_TUESDAY_MS) / WEEK_MS) * WEEK_MS + FIRST_TUESDAY_MS;
 
   for (const series of all) {
     if (!names.includes(series.name)) continue;
 
-    const current = series.weeks.find((entry) => entry.start <= now.getTime() && now.getTime() < entry.start + WEEK_MS);
+    const current = series.weeks.find((entry) => entry.start >= weekStart && entry.start < weekStart + WEEK_MS);
     if (!current?.track) continue;
 
-    entries.push({ name: series.name, category: series.category, series: displayName(series.name), ...current });
+    const category = series.category === 'Sports Car' && ENDURANCE_PATTERN.test(series.name) ? 'Endurance' : series.category;
+    entries.push({ name: series.name, category, series: displayName(series.name), ...current });
   }
 
   if (entries.length === 0) return undefined;
@@ -147,7 +152,8 @@ export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now:
   entries.sort((a, b) => rank(a.category) - rank(b.category));
 
   const season = all.map((series) => series.name.match(SEASON_LABEL_PATTERN)?.[0]).find(Boolean) ?? '';
-  return { season, week: entries[0].week, start: entries[0].start, entries };
+  const base = entries.find((entry) => entry.start === weekStart) ?? entries[0];
+  return { season, week: base.week, start: weekStart, entries };
 }
 
 export async function loadSchedule(): Promise<SeriesSchedule[]> {
@@ -156,5 +162,5 @@ export async function loadSchedule(): Promise<SeriesSchedule[]> {
 
 export function formatWeekRange(start: number): string {
   const format = (time: number) => new Date(time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-  return `${format(start)} – ${format(start + WEEK_MS - 24 * 60 * 60 * 1000)}`;
+  return `${format(start)} – ${format(start + WEEK_MS - DAY_MS)}`;
 }

@@ -54,8 +54,9 @@ and by `/weekly add`. The very first autocomplete after deploy may come back
 empty while it fills the cache.
 
 The channel gets one message per week: season, week number and date range,
-then the tracked series grouped under their category (Sports Car, Formula Car,
-Oval and so on), one line per series with the track. Series that run different
+then the tracked series grouped under their category (Sports Car, Endurance, Formula
+Car, Oval and so on; sports car series with "Endurance" in the name get their
+own Endurance category), one line per series with the track. Series that run different
 cars each week also show the cars, shortened to a class like GT3 when every car
 shares one. The message is edited in place during the week and a new message is
 posted when the week rolls over.
