@@ -13,6 +13,7 @@ const CATEGORY_ORDER = ['Sports Car', 'Endurance', 'Formula Car', 'Oval', 'Dirt 
 const ENDURANCE_PATTERN = /endurance/i;
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
 const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
+const CARS_END_PATTERN = /-->|^Races\b/;
 const WEEKLY_CARS_PATTERN = /^See race week for cars/;
 const RACE_TIME_PATTERN = /^\(\d{4}-\d{2}-\d{2} /;
 const TOC_LEADER_PATTERN = /\.\s\./;
@@ -36,6 +37,7 @@ export interface SeriesSchedule {
   name: string;
   category: string;
   weeklyCars: boolean;
+  cars: string;
   weeks: SeriesWeek[];
 }
 
@@ -91,6 +93,8 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
   const all: SeriesSchedule[] = [];
   let category = 'Other';
   let current: SeriesSchedule | undefined;
+  let collectingCars = false;
+  let carLines: string[] = [];
 
   for (const page of pages) {
     const items = page.filter((item) => !TOC_LEADER_PATTERN.test(item.text)).sort((a, b) => b.y - a.y || a.x - b.x);
@@ -103,14 +107,27 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
       }
 
       if (item.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(item.text) && !WEEK_PATTERN.test(item.text)) {
-        current = { name: item.text, category, weeklyCars: false, weeks: [] };
+        current = { name: item.text, category, weeklyCars: false, cars: '', weeks: [] };
         all.push(current);
+        collectingCars = true;
+        carLines = [];
         continue;
       }
 
       if (current && item.x < TITLE_COLUMN_MAX_X && WEEKLY_CARS_PATTERN.test(item.text)) {
         current.weeklyCars = true;
+        collectingCars = false;
         continue;
+      }
+
+      if (current && collectingCars && item.x < TITLE_COLUMN_MAX_X) {
+        if (CARS_END_PATTERN.test(item.text) || WEEK_PATTERN.test(item.text)) {
+          collectingCars = false;
+        } else {
+          carLines.push(item.text);
+          current.cars = carLines.reduce((text, line) => (text.endsWith('-') ? text + line : `${text} ${line}`.trim()), '');
+          continue;
+        }
       }
 
       const week = item.text.match(WEEK_PATTERN);
@@ -140,7 +157,8 @@ export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now:
     if (!current?.track) continue;
 
     const category = series.category === 'Sports Car' && ENDURANCE_PATTERN.test(series.name) ? 'Endurance' : series.category;
-    entries.push({ name: series.name, category, series: displayName(series.name), ...current });
+    const cars = current.cars || (category === 'Endurance' ? series.cars : '');
+    entries.push({ name: series.name, category, series: displayName(series.name), ...current, cars });
   }
 
   if (entries.length === 0) return undefined;
