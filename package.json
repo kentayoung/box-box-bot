@@ -9,7 +9,8 @@
     "deploy": "wrangler deploy",
     "deploy-commands": "tsx src/deploy-commands.ts",
     "lint": "eslint .",
-    "typecheck": "tsc -p tsconfig.worker.json --noEmit && tsc -p tsconfig.node.json --noEmit"
+    "typecheck": "tsc -p tsconfig.worker.json --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@google/genai": "^2.15.0",
@@ -23,6 +24,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.0",
+    "vitest": "^3.2.7",
     "wrangler": "^4.86.0"
   }
 }
