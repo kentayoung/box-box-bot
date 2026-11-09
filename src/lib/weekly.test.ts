@@ -74,7 +74,7 @@ describe('formatThisWeek', () => {
 
   it('prints the header and one heading per category', () => {
     const text = formatThisWeek(schedule([entry('Mazda', 'Sports Car'), entry('BMW', 'Sports Car'), entry('Tour', 'Endurance')]));
-    expect(text.startsWith('# 2026 Season 4\n## Week 8 · Nov 3 – Nov 9')).toBe(true);
+    expect(text.startsWith('# 2026 Season 4 Week 8\n## Nov 3 – Nov 9')).toBe(true);
     expect(text.match(/### Sports Car/g)).toHaveLength(1);
     expect(text).toContain('### Endurance');
   });
