@@ -120,6 +120,17 @@ installed `wrangler`'s bundled local runtime is older than the
 `compatibility_date` pinned to a date that version supports. Only bump
 either if you've also upgraded Node.
 
+## Tests
+
+```bash
+npm test   # vitest, runs the schedule parsing and weekly post formatting tests
+```
+
+Tests live next to the code as `src/lib/*.test.ts` and run in CI alongside lint
+and typecheck. They cover the pure logic only (PDF parsing, week matching,
+endurance grouping and Mountain time conversion), so nothing hits Discord,
+KV or iRacing.
+
 ## 3. Environment Variables / Secrets
 
 | Var | Used by | Notes |
