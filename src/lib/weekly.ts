@@ -128,6 +128,11 @@ async function postThisWeek(env: WeeklyEnv, config: GuildConfig, schedule: Weekl
 }
 
 export async function syncGuild(env: WeeklyEnv, guildId: string, config: GuildConfig, all: SeriesSchedule[], now = new Date()): Promise<WeeklySchedule | undefined> {
+  if (!config.thisWeekChannelId) {
+    console.log(`guild ${guildId}: no channel set, skipping the weekly post`);
+    return undefined;
+  }
+
   const schedule = buildWeeklySchedule(all, config.series, new Date(now.getTime() + LOOKAHEAD_MS));
   if (!schedule) {
     console.log(`guild ${guildId}: no tracked series has a current week, leaving channels untouched`);
