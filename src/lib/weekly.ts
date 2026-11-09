@@ -126,7 +126,7 @@ export function formatRaceTimes(races: string, eventStart: number): string {
 }
 
 export function formatThisWeek(schedule: WeeklySchedule): string {
-  const header = [`# ${schedule.season}`, `## Week ${schedule.week} · ${formatWeekRange(schedule.start)}`].filter(Boolean).join('\n');
+  const header = [`# ${[schedule.season, `Week ${schedule.week}`].filter(Boolean).join(' ')}`, `## ${formatWeekRange(schedule.start)}`].join('\n');
 
   let content = header;
   let category = '';
