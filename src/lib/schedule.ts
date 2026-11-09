@@ -13,6 +13,7 @@ const CATEGORY_ORDER = ['Sports Car', 'Endurance', 'Formula Car', 'Oval', 'Dirt 
 const ENDURANCE_PATTERN = /endurance/i;
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
 const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
+const RACES_PATTERN = /^Races\b/;
 const CARS_END_PATTERN = /-->|^Races\b/;
 const WEEKLY_CARS_PATTERN = /^See race week for cars/;
 const RACE_TIME_PATTERN = /^\(\d{4}-\d{2}-\d{2} /;
@@ -38,6 +39,7 @@ export interface SeriesSchedule {
   category: string;
   weeklyCars: boolean;
   cars: string;
+  races: string;
   weeks: SeriesWeek[];
 }
 
@@ -49,6 +51,7 @@ export interface WeeklyEntry {
   start: number;
   track: string;
   cars: string;
+  races: string;
 }
 
 export interface WeeklySchedule {
@@ -107,7 +110,7 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
       }
 
       if (item.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(item.text) && !WEEK_PATTERN.test(item.text)) {
-        current = { name: item.text, category, weeklyCars: false, cars: '', weeks: [] };
+        current = { name: item.text, category, weeklyCars: false, cars: '', races: '', weeks: [] };
         all.push(current);
         collectingCars = true;
         carLines = [];
@@ -116,6 +119,12 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
 
       if (current && item.x < TITLE_COLUMN_MAX_X && WEEKLY_CARS_PATTERN.test(item.text)) {
         current.weeklyCars = true;
+        collectingCars = false;
+        continue;
+      }
+
+      if (current && item.x < TITLE_COLUMN_MAX_X && RACES_PATTERN.test(item.text)) {
+        current.races = item.text;
         collectingCars = false;
         continue;
       }
@@ -158,7 +167,8 @@ export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now:
 
     const category = series.category === 'Sports Car' && ENDURANCE_PATTERN.test(series.name) ? 'Endurance' : series.category;
     const cars = current.cars || (category === 'Endurance' ? series.cars : '');
-    entries.push({ name: series.name, category, series: displayName(series.name), ...current, cars });
+    const races = category === 'Endurance' ? series.races : '';
+    entries.push({ name: series.name, category, series: displayName(series.name), ...current, cars, races });
   }
 
   if (entries.length === 0) return undefined;

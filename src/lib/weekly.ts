@@ -5,6 +5,8 @@ const CONFIG_PREFIX = 'guild:';
 const CATALOG_KEY = 'catalog';
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_CARS_LENGTH = 200;
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
 const LOOKAHEAD_MS = 24 * 60 * 60 * 1000;
 
 export interface SeriesInfo {
@@ -51,6 +53,9 @@ export async function loadCatalog(env: WeeklyEnv): Promise<SeriesInfo[] | null> 
   return env.CONFIG.get<SeriesInfo[]>(CATALOG_KEY, 'json');
 }
 
+const DAY_NUMBERS: Record<string, number> = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+const DAY_PATTERN = /\b(sun|mon|tues?|wed(?:nes)?|thu(?:rs)?|fri|sat(?:ur)?)days?\b/gi;
+
 const CAR_CLASSES: [RegExp, string][] = [
   [/GTP|Hybrid V8/, 'GTP'],
   [/499P|LMH/, 'LMH'],
@@ -92,6 +97,34 @@ export function formatCars(cars: string): string {
   return all.length > shown.length ? `${shown.join(', ')} +${all.length - shown.length} more` : shown.join(', ');
 }
 
+export function formatRaceTimes(races: string, eventStart: number): string {
+  const eventDay = new Date(eventStart).getUTCDay();
+  const days = [...races.matchAll(DAY_PATTERN)];
+  const instants = new Set<number>();
+
+  for (const [index, day] of days.entries()) {
+    const text = races.slice((day.index ?? 0) + day[0].length, days[index + 1]?.index);
+    const offset = ((DAY_NUMBERS[day[1].slice(0, 3).toLowerCase()] - eventDay + 8) % 7) - 1;
+    for (const [, hour, minute] of text.matchAll(/\b(\d{1,2})(?::(\d{2}))?\b/g)) {
+      instants.add(eventStart + offset * DAY_MS + Number(hour) * HOUR_MS + Number(minute ?? 0) * 60_000);
+    }
+  }
+
+  const parts = (time: number) => {
+    const formatted = new Intl.DateTimeFormat('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Denver' }).formatToParts(time);
+    const get = (type: string) => formatted.find((part) => part.type === type)?.value ?? '';
+    const minute = get('minute') === '00' ? '' : `:${get('minute')}`;
+    return { day: get('weekday'), time: `${get('hour')}${minute}${get('dayPeriod').toLowerCase()}` };
+  };
+
+  const byDay = new Map<string, string[]>();
+  for (const time of [...instants].sort((a, b) => a - b)) {
+    const { day, time: label } = parts(time);
+    byDay.set(day, [...(byDay.get(day) ?? []), label]);
+  }
+  return byDay.size === 0 ? '' : `${[...byDay].map(([day, times]) => `${day} ${times.join(', ')}`).join(' · ')} MT`;
+}
+
 export function formatThisWeek(schedule: WeeklySchedule): string {
   const header = [`# ${schedule.season}`, `## Week ${schedule.week} · ${formatWeekRange(schedule.start)}`].filter(Boolean).join('\n');
 
@@ -100,7 +133,8 @@ export function formatThisWeek(schedule: WeeklySchedule): string {
   for (const entry of schedule.entries) {
     const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
     const details = [entry.track, entry.cars && `***${formatCars(entry.cars)}***`].filter(Boolean).join(' · ');
-    const line = `\n**${entry.series}**: ${details}`;
+    const times = entry.races && formatRaceTimes(entry.races, entry.start);
+    const line = `\n**${entry.series}**: ${details}${times ? `\n-# ${times}` : ''}`;
     if (content.length + heading.length + line.length > MAX_MESSAGE_LENGTH) break;
     category = entry.category;
     content += heading + line;
