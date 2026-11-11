@@ -134,7 +134,9 @@ export function formatThisWeek(schedule: WeeklySchedule): string {
     const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
     const details = [entry.track, entry.cars && `***${formatCars(entry.cars)}***`].filter(Boolean).join(' · ');
     const times = entry.races && formatRaceTimes(entry.races, entry.start);
-    const line = `\n**${entry.series}**: ${details}${times ? `\n-# ${times}` : ''}`;
+    const format = entry.team === undefined ? '' : entry.team ? `Team${entry.minDrivers ? ` (${entry.minDrivers}+)` : ''}` : 'Solo';
+    const subtext = [format, times].filter(Boolean).join(' · ');
+    const line = `\n**${entry.series}**: ${details}${subtext ? `\n-# ${subtext}` : ''}`;
     if (content.length + heading.length + line.length > MAX_MESSAGE_LENGTH) break;
     category = entry.category;
     content += heading + line;

@@ -10,6 +10,7 @@ function series(name: string, category: string, weeks: [number, string, string][
     weeklyCars: false,
     cars: '',
     races: '',
+    team: false,
     weeks: weeks.map(([week, date, track]) => ({ week, start: utc(date), track, cars: '' })),
     ...extra,
   };
@@ -27,7 +28,7 @@ const tour = series(
     [4, '2026-11-07', 'Autodromo Hermanos Rodriguez'],
     [5, '2026-11-21', 'Silverstone Circuit'],
   ],
-  { cars: 'Porsche 963 GTP, Ferrari 296 GT3', races: 'Races every other Saturday at 7, 18 GMT and Sunday at 14 GMT' },
+  { cars: 'Porsche 963 GTP, Ferrari 296 GT3', team: true, races: 'Races every other Saturday at 7, 18 GMT and Sunday at 14 GMT' },
 );
 
 const all = [mazda, tour];
@@ -91,6 +92,24 @@ describe('buildWeeklySchedule', () => {
     expect(entry?.races).toContain('Saturday at 7, 18 GMT');
   });
 
+  it('marks team racing on endurance entries only', () => {
+    const entries = buildWeeklySchedule(all, names, new Date('2026-11-04T12:00:00Z'))?.entries;
+    expect(entries?.find((item) => item.category === 'Endurance')?.team).toBe(true);
+    expect(entries?.find((item) => item.category === 'Sports Car')?.team).toBeUndefined();
+  });
+
+  it('trusts the weekly driver limits over the header', () => {
+    const solo = series('Solo Endurance - 2026 Season 4', 'Sports Car', [[8, '2026-11-03', 'Lime Rock Park']], { team: true });
+    solo.weeks[0].drivers = { min: 1, max: 1 };
+    const optional = series('Optional Endurance - 2026 Season 4', 'Sports Car', [[8, '2026-11-03', 'Lime Rock Park']], { team: false });
+    optional.weeks[0].drivers = { min: 2, max: 16 };
+    const entries = buildWeeklySchedule([solo, optional], [solo.name, optional.name], new Date('2026-11-04T12:00:00Z'))?.entries;
+    expect(entries?.map((item) => [item.series, item.team, item.minDrivers])).toEqual([
+      ['Solo Endurance', false, undefined],
+      ['Optional Endurance', true, 2],
+    ]);
+  });
+
   it('only recategorizes Sports Car series', () => {
     const oval = series('Endurance Oval - 2026 Season 4', 'Oval', [[8, '2026-11-03', 'Daytona']]);
     const schedule = buildWeeklySchedule([oval], [oval.name], new Date('2026-11-04T12:00:00Z'));
@@ -110,7 +129,10 @@ describe('parseSchedule', () => {
     item('Races every other Saturday at 7, 18 GMT and Sunday at 14 GMT', 58, 653),
     item('Week 1 (2026-09-26)', 58, 560),
     item('Indianapolis Motor Speedway - Road Course', 158, 560),
+    item('Local enforced cautions, Min 2', 358, 560),
+    item('360', 518, 560),
     item('(2026-09-26 09:15 1x)', 158, 551),
+    item('drivers, Max 16 drivers, Drive Fair', 358, 551),
     item('Week 2 (2026-10-10)', 58, 511),
     item('Red Bull Ring - Grand Prix', 158, 511),
     item('(2026-10-10 09:10 1x)', 158, 502),
@@ -135,6 +157,20 @@ describe('parseSchedule', () => {
 
   it('collects the header car list and joins hyphenated line wraps', () => {
     expect(tourSeries.cars).toBe('Porsche 963 GTP, Ferrari 296 GT3, Mercedes-AMG GT3 2020');
+  });
+
+  it('flags team racing from the license line', () => {
+    expect(tourSeries.team).toBe(true);
+    expect(ringMeister.team).toBe(false);
+    const solo = parseSchedule([
+      [item('IMSA Sportscar Endurance Challenge - 2026 Season 4', 58, 700), item('Class D 4.0 --> Pro/WC 4.0', 58, 686), item('Week 1 (2026-09-19)', 58, 600), item('Silverstone Circuit', 158, 600)],
+    ]);
+    expect(solo[0].team).toBe(false);
+  });
+
+  it('reads driver limits from wrapped conditions text', () => {
+    expect(tourSeries.weeks[0].drivers).toEqual({ min: 2, max: 16 });
+    expect(tourSeries.weeks[1].drivers).toBeUndefined();
   });
 
   it('keeps the races line', () => {
