@@ -7,12 +7,16 @@ const FIRST_TUESDAY_MS = 5 * DAY_MS;
 const TITLE_COLUMN_MAX_X = 100;
 const TRACK_COLUMN_MIN_X = 143;
 const TRACK_COLUMN_MAX_X = 300;
+const CONDITIONS_COLUMN_MIN_X = 340;
+const CONDITIONS_COLUMN_MAX_X = 510;
 
 const CATEGORY_ORDER = ['Sports Car', 'Endurance', 'Formula Car', 'Oval', 'Dirt Oval', 'Dirt Road', 'Unranked'];
 
 const ENDURANCE_PATTERN = /endurance/i;
 const WEEK_PATTERN = /^Week (\d+) \((\d{4}-\d{2}-\d{2})\)/;
 const DIVIDER_PATTERN = /^[A-Z] Class Series \(([A-Z ]+)\)$/;
+const DRIVERS_PATTERN = /Min (\d+) drivers?,? Max (\d+) drivers?/i;
+const TEAM_PATTERN = /-->.*\bTeam racing\b/i;
 const RACES_PATTERN = /^Races\b/;
 const CARS_END_PATTERN = /-->|^Races\b/;
 const WEEKLY_CARS_PATTERN = /^See race week for cars/;
@@ -32,6 +36,7 @@ interface SeriesWeek {
   start: number;
   track: string;
   cars: string;
+  drivers?: { min: number; max: number };
 }
 
 export interface SeriesSchedule {
@@ -40,6 +45,7 @@ export interface SeriesSchedule {
   weeklyCars: boolean;
   cars: string;
   races: string;
+  team: boolean;
   weeks: SeriesWeek[];
 }
 
@@ -52,6 +58,8 @@ export interface WeeklyEntry {
   track: string;
   cars: string;
   races: string;
+  team?: boolean;
+  minDrivers?: number;
 }
 
 export interface WeeklySchedule {
@@ -110,7 +118,7 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
       }
 
       if (item.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(item.text) && !WEEK_PATTERN.test(item.text)) {
-        current = { name: item.text, category, weeklyCars: false, cars: '', races: '', weeks: [] };
+        current = { name: item.text, category, weeklyCars: false, cars: '', races: '', team: false, weeks: [] };
         all.push(current);
         collectingCars = true;
         carLines = [];
@@ -122,6 +130,8 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
         collectingCars = false;
         continue;
       }
+
+      if (current && item.x < TITLE_COLUMN_MAX_X && TEAM_PATTERN.test(item.text)) current.team = true;
 
       if (current && item.x < TITLE_COLUMN_MAX_X && RACES_PATTERN.test(item.text)) {
         current.races = item.text;
@@ -148,7 +158,16 @@ export function parseSchedule(pages: PdfItem[][]): SeriesSchedule[] {
         if (next.x >= TRACK_COLUMN_MIN_X && next.x < TRACK_COLUMN_MAX_X) track.push(next.text);
       }
       const [trackName, ...cars] = current.weeklyCars ? track : [track.join(' ')];
-      current.weeks.push({ week: Number(week[1]), start: Date.parse(`${week[2]}T00:00:00Z`), track: trackName ?? '', cars: cars.join(' ') });
+
+      const conditions: string[] = [];
+      for (const next of items.slice(index + 1)) {
+        if (WEEK_PATTERN.test(next.text) || (next.x < TITLE_COLUMN_MAX_X && SERIES_TITLE_PATTERN.test(next.text))) break;
+        if (next.x >= CONDITIONS_COLUMN_MIN_X && next.x < CONDITIONS_COLUMN_MAX_X) conditions.push(next.text);
+      }
+      const limits = conditions.join(' ').match(DRIVERS_PATTERN);
+      const drivers = limits ? { min: Number(limits[1]), max: Number(limits[2]) } : undefined;
+
+      current.weeks.push({ week: Number(week[1]), start: Date.parse(`${week[2]}T00:00:00Z`), track: trackName ?? '', cars: cars.join(' '), drivers });
     }
   }
 
@@ -168,7 +187,10 @@ export function buildWeeklySchedule(all: SeriesSchedule[], names: string[], now:
     const category = series.category === 'Sports Car' && ENDURANCE_PATTERN.test(series.name) ? 'Endurance' : series.category;
     const cars = current.cars || (category === 'Endurance' ? series.cars : '');
     const races = category === 'Endurance' ? series.races : '';
-    entries.push({ name: series.name, category, series: displayName(series.name), ...current, cars, races });
+    const endurance = category === 'Endurance';
+    const team = endurance ? (current.drivers ? current.drivers.max > 1 : series.team) : undefined;
+    const minDrivers = endurance && team ? current.drivers?.min : undefined;
+    entries.push({ name: series.name, category, series: displayName(series.name), ...current, cars, races, team, minDrivers });
   }
 
   if (entries.length === 0) return undefined;

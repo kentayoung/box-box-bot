@@ -86,6 +86,23 @@ describe('formatThisWeek', () => {
     expect(text).toContain('**Tour**: Lime Rock Park · ***GT3***\n-# Sat 12am MT');
   });
 
+  it('labels endurance entries as team or solo', () => {
+    const text = formatThisWeek(
+      schedule([
+        entry('Tour', 'Endurance', { team: true, races: 'Races Saturday at 7 GMT', start: utc('2026-11-07') }),
+        entry('Challenge', 'Endurance', { team: false }),
+        entry('Optional', 'Endurance', { team: true, minDrivers: 1 }),
+        entry('Required', 'Endurance', { team: true, minDrivers: 2 }),
+        entry('Mazda', 'Sports Car'),
+      ]),
+    );
+    expect(text).toContain('-# Team · Sat 12am MT');
+    expect(text).toContain('**Optional**: Lime Rock Park\n-# Team (1+)');
+    expect(text).toContain('**Required**: Lime Rock Park\n-# Team (2+)');
+    expect(text).toContain('**Challenge**: Lime Rock Park\n-# Solo');
+    expect(text).not.toMatch(/\*\*Mazda\*\*: Lime Rock Park\n-#/);
+  });
+
   it('stays under the Discord message limit', () => {
     const many = Array.from({ length: 80 }, (_, index) => entry(`Series number ${index}`, 'Sports Car', { track: 'A fairly long track name here' }));
     expect(formatThisWeek(schedule(many)).length).toBeLessThanOrEqual(2000);
