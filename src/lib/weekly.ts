@@ -130,7 +130,12 @@ export function formatThisWeek(schedule: WeeklySchedule): string {
 
   let content = header;
   let category = '';
+  const categories = new Map<string, WeeklySchedule['entries']>();
   for (const entry of schedule.entries) {
+    categories.set(entry.category, [...(categories.get(entry.category) ?? []), entry]);
+  }
+  const entries = [...categories.values()].flatMap((group) => group.sort((a, b) => a.series.localeCompare(b.series)));
+  for (const entry of entries) {
     const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
     const details = [entry.track, entry.cars && `***${formatCars(entry.cars)}***`].filter(Boolean).join(' · ');
     const times = entry.races && formatRaceTimes(entry.races, entry.start);

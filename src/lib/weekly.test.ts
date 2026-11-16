@@ -79,6 +79,17 @@ describe('formatThisWeek', () => {
     expect(text).toContain('### Endurance');
   });
 
+  it('lists series alphabetically within each category', () => {
+    const text = formatThisWeek(schedule([
+      entry('Mazda', 'Sports Car'),
+      entry('BMW', 'Sports Car'),
+      entry('Tour', 'Endurance'),
+      entry('Aston Martin', 'Endurance'),
+    ]));
+    expect(text.indexOf('**BMW**')).toBeLessThan(text.indexOf('**Mazda**'));
+    expect(text.indexOf('**Aston Martin**')).toBeLessThan(text.indexOf('**Tour**'));
+  });
+
   it('shows cars in bold italic and race times as subtext', () => {
     const text = formatThisWeek(
       schedule([entry('Tour', 'Endurance', { start: utc('2026-11-07'), cars: 'Mercedes-AMG GT3 2020, Ferrari 296 GT3', races: 'Races Saturday at 7 GMT' })]),
