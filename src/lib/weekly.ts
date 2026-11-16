@@ -1,13 +1,23 @@
 import { DiscordError, discordRequest } from './discord.js';
-import { buildWeeklySchedule, displayName, formatWeekRange, loadSchedule, type SeriesSchedule, type WeeklySchedule } from './schedule.js';
+import seriesIds from './series-ids.json';
+import { buildWeeklySchedule, displayName, formatWeekRange, loadSchedule, type SeriesSchedule, type WeeklyEntry, type WeeklySchedule } from './schedule.js';
 
 const CONFIG_PREFIX = 'guild:';
 const CATALOG_KEY = 'catalog';
-const MAX_MESSAGE_LENGTH = 2000;
+const MAX_DESCRIPTION_LENGTH = 4096;
+const EMBED_COLOR = 0x1f6feb;
 const MAX_CARS_LENGTH = 200;
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 const LOOKAHEAD_MS = 24 * 60 * 60 * 1000;
+const SERIES_URL = 'https://members-ng.iracing.com/web/racing/official/series-list';
+const SEASON_IDS = new Map(Object.entries(seriesIds).map(([name, { seasonId }]) => [name, seasonId]));
+
+export interface WeeklyEmbed {
+  title: string;
+  description: string;
+  color: number;
+}
 
 export interface SeriesInfo {
   name: string;
@@ -125,10 +135,15 @@ export function formatRaceTimes(races: string, eventStart: number): string {
   return byDay.size === 0 ? '' : `${[...byDay].map(([day, times]) => `${day} ${times.join(', ')}`).join(' · ')} MT`;
 }
 
-export function formatThisWeek(schedule: WeeklySchedule): string {
-  const header = [`# ${[schedule.season, `Week ${schedule.week}`].filter(Boolean).join(' ')}`, `## ${formatWeekRange(schedule.start)}`].join('\n');
+function seriesLink(entry: WeeklyEntry): string {
+  const seasonId = SEASON_IDS.get(entry.name.replace(/\s+/g, ' ').trim());
+  return seasonId ? `[${entry.series}](${SERIES_URL}/${seasonId}/go-racing)` : entry.series;
+}
 
-  let content = header;
+export function formatThisWeek(schedule: WeeklySchedule): WeeklyEmbed {
+  const title = [schedule.season, `Week ${schedule.week}`].filter(Boolean).join(' ');
+
+  let content = formatWeekRange(schedule.start);
   let category = '';
   const categories = new Map<string, WeeklySchedule['entries']>();
   for (const entry of schedule.entries) {
@@ -136,34 +151,34 @@ export function formatThisWeek(schedule: WeeklySchedule): string {
   }
   const entries = [...categories.values()].flatMap((group) => group.sort((a, b) => a.series.localeCompare(b.series)));
   for (const entry of entries) {
-    const heading = entry.category === category ? '' : `\n\n### ${entry.category}`;
+    const heading = entry.category === category ? '' : `\n\n__**${entry.category}**__`;
     const details = [entry.track, entry.cars && `***${formatCars(entry.cars)}***`].filter(Boolean).join(' · ');
     const times = entry.races && formatRaceTimes(entry.races, entry.start);
     const format = entry.team === undefined ? '' : entry.team ? `Team${entry.minDrivers ? ` (${entry.minDrivers}+)` : ''}` : 'Solo';
     const subtext = [format, times].filter(Boolean).join(' · ');
-    const line = `\n**${entry.series}**: ${details}${subtext ? `\n-# ${subtext}` : ''}`;
-    if (content.length + heading.length + line.length > MAX_MESSAGE_LENGTH) break;
+    const line = `\n**${seriesLink(entry)}**: ${details}${subtext ? `\n${subtext}` : ''}`;
+    if (content.length + heading.length + line.length > MAX_DESCRIPTION_LENGTH) break;
     category = entry.category;
     content += heading + line;
   }
-  return content;
+  return { title, description: content, color: EMBED_COLOR };
 }
 
 async function postThisWeek(env: WeeklyEnv, config: GuildConfig, schedule: WeeklySchedule): Promise<void> {
   if (!config.thisWeekChannelId) return;
   const path = `/channels/${config.thisWeekChannelId}/messages`;
-  const body = JSON.stringify({ content: formatThisWeek(schedule) });
+  const embeds = [formatThisWeek(schedule)];
 
   if (config.thisWeekMessageId && config.thisWeekStart === schedule.start) {
     try {
-      await discordRequest(env.DISCORD_TOKEN, `${path}/${config.thisWeekMessageId}`, { method: 'PATCH', body });
+      await discordRequest(env.DISCORD_TOKEN, `${path}/${config.thisWeekMessageId}`, { method: 'PATCH', body: JSON.stringify({ content: '', embeds }) });
       return;
     } catch (err) {
       if (!(err instanceof DiscordError && err.status === 404)) throw err;
     }
   }
 
-  const message = await discordRequest<{ id: string }>(env.DISCORD_TOKEN, path, { method: 'POST', body });
+  const message = await discordRequest<{ id: string }>(env.DISCORD_TOKEN, path, { method: 'POST', body: JSON.stringify({ embeds }) });
   config.thisWeekMessageId = message.id;
   config.thisWeekStart = schedule.start;
 }
