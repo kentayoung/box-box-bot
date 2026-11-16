@@ -1,0 +1,650 @@
+{
+  "2026 iRacing Mountain Showdown": {
+    "seriesId": 636,
+    "seasonId": 6768
+  },
+  "Advanced Mazda MX-5 Cup by Heusinkveld - 2026 Season 4": {
+    "seriesId": 231,
+    "seasonId": 6470
+  },
+  "Advanced Pro2 Lite Off Road Series - 2026 Season 4": {
+    "seriesId": 588,
+    "seasonId": 6574
+  },
+  "AMSOIL USAC Sprint Car 2026 - Season 4": {
+    "seriesId": 309,
+    "seasonId": 6565
+  },
+  "ARCA Menards Series - 2026 Season 4 - Fixed": {
+    "seriesId": 167,
+    "seasonId": 6523
+  },
+  "Big Block Modified Series - 2026 Season 4": {
+    "seriesId": 428,
+    "seasonId": 6561
+  },
+  "Big Block Modified Series - Fixed - 2026 Season 4": {
+    "seriesId": 518,
+    "seasonId": 6562
+  },
+  "BMW M Power Challenge - 2026 Season 4": {
+    "seriesId": 557,
+    "seasonId": 6456
+  },
+  "BMW M2 Cup by Vero Motion - 2026 Season 4": {
+    "seriesId": 571,
+    "seasonId": 6445
+  },
+  "CARS Tour Late Model Stocks - 2026 Season 4": {
+    "seriesId": 33,
+    "seasonId": 6521
+  },
+  "CARS Tour Late Model Stocks - Fixed - 2026 Season 4": {
+    "seriesId": 440,
+    "seasonId": 6522
+  },
+  "Caterham 420R Cup - 2026 Season 4": {
+    "seriesId": 626,
+    "seasonId": 6602
+  },
+  "Caterham Academy Challenge - 2026 Season 4": {
+    "seriesId": 625,
+    "seasonId": 6601
+  },
+  "Clio Cup - 2026 Season 4": {
+    "seriesId": 519,
+    "seasonId": 6448
+  },
+  "Creventic Endurance Series - 2026 Season": {
+    "seriesId": 451,
+    "seasonId": 6434
+  },
+  "Dallara DW12 Dash - 2026 Season 4": {
+    "seriesId": 471,
+    "seasonId": 6515
+  },
+  "Dallara Formula iR - 2026 Season 4": {
+    "seriesId": 429,
+    "seasonId": 6499
+  },
+  "Dirt 410 Sprint Car Tour - 2026 Season Fixed": {
+    "seriesId": 501,
+    "seasonId": 6075
+  },
+  "Dirt Legends Cup - 2026 Season 4": {
+    "seriesId": 315,
+    "seasonId": 6546
+  },
+  "Dirt Midget Cup - 2026 Season 4": {
+    "seriesId": 327,
+    "seasonId": 6552
+  },
+  "Dirt Midget Cup - Fixed - 2026 Season 4": {
+    "seriesId": 516,
+    "seasonId": 6553
+  },
+  "Dirt Mini Stock Rookie Series - 2026 Season 4": {
+    "seriesId": 567,
+    "seasonId": 6542
+  },
+  "Dirt Super Late Model Tour - 2026 Season Fixed": {
+    "seriesId": 500,
+    "seasonId": 6074
+  },
+  "DIRTcar 305 Sprint Car Series by Fanatec - 2026 Season 4 Fixed": {
+    "seriesId": 292,
+    "seasonId": 6547
+  },
+  "DIRTcar 358 Modified Series - 2026 Season 4": {
+    "seriesId": 466,
+    "seasonId": 6549
+  },
+  "DIRTcar 360 Sprint Car Series - 2026 Season 4": {
+    "seriesId": 305,
+    "seasonId": 6554
+  },
+  "DIRTcar 360 Sprint Car Series - Fixed 2026 Season 4": {
+    "seriesId": 515,
+    "seasonId": 6555
+  },
+  "DIRTcar Class C Dirt Street Stock Series - 2026 Season 4 Fixed": {
+    "seriesId": 311,
+    "seasonId": 6551
+  },
+  "DIRTcar Limited Late Model Series - 2026 Season 4 Fixed": {
+    "seriesId": 291,
+    "seasonId": 6548
+  },
+  "DIRTcar Pro Late Model Series - 2026 Season 4": {
+    "seriesId": 306,
+    "seasonId": 6557
+  },
+  "DIRTcar Pro Late Model Series - Fixed - 2026 Season 4": {
+    "seriesId": 517,
+    "seasonId": 6558
+  },
+  "DIRTcar Street Stock Rookie by IMB Racewear - 2026 Season 4": {
+    "seriesId": 446,
+    "seasonId": 6543
+  },
+  "DIRTcar UMP Modified Series - 2026 Season 4": {
+    "seriesId": 576,
+    "seasonId": 6559
+  },
+  "DIRTcar UMP Modified Series - Fixed - 2026 Season 4": {
+    "seriesId": 442,
+    "seasonId": 6560
+  },
+  "Draft Master Challenge by Simagic - 2026 Season 4": {
+    "seriesId": 538,
+    "seasonId": 6527
+  },
+  "Ferrari 296 Challenge 2026 Season 4": {
+    "seriesId": 353,
+    "seasonId": 6457
+  },
+  "FIA Cross Car Championship - 2026 Season 4": {
+    "seriesId": 599,
+    "seasonId": 6568
+  },
+  "FIA F4 Esports Regional Tour - America - 2026 Season 4": {
+    "seriesId": 541,
+    "seasonId": 6497
+  },
+  "FIA F4 Esports Regional Tour - Asia Pacific - 2026 Season 4": {
+    "seriesId": 540,
+    "seasonId": 6496
+  },
+  "FIA F4 Esports Regional Tour - Europe - 2026 Season 4": {
+    "seriesId": 542,
+    "seasonId": 6498
+  },
+  "FIA Formula 4 Challenge - Fixed - 2026 Season 4": {
+    "seriesId": 498,
+    "seasonId": 6495
+  },
+  "Ford Mustang Challenge by Skip Barber - 2026 Season 4": {
+    "seriesId": 530,
+    "seasonId": 6452
+  },
+  "Formula 1600 Rookie Series by Asetek Racing - 2026 Season 4": {
+    "seriesId": 520,
+    "seasonId": 6490
+  },
+  "Formula A - Cosworth Cup Grand Prix - 2026 Season 4": {
+    "seriesId": 260,
+    "seasonId": 6513
+  },
+  "Formula A - Cosworth Cup Grand Prix - Fixed - 2026 Season 4": {
+    "seriesId": 484,
+    "seasonId": 6514
+  },
+  "Formula A - Grand Prix Tour - Fixed - 2026 Season": {
+    "seriesId": 496,
+    "seasonId": 6234
+  },
+  "Formula B - Super Formula Series - Fixed - 2026 Season 4": {
+    "seriesId": 537,
+    "seasonId": 6512
+  },
+  "Formula B - Super Formula Series 2026 Season 4": {
+    "seriesId": 536,
+    "seasonId": 6511
+  },
+  "Formula C - Dallara F3 Series - 2026 Season 4": {
+    "seriesId": 431,
+    "seasonId": 6500
+  },
+  "Formula C - Dallara F3 Series -2026 Season 4 - Fixed": {
+    "seriesId": 456,
+    "seasonId": 6501
+  },
+  "Formula C - Super Formula Lights - Fixed by RSS - 2026 Season 4": {
+    "seriesId": 552,
+    "seasonId": 6503
+  },
+  "Formula C - Super Formula Lights by RSS - 2026 Season 4": {
+    "seriesId": 551,
+    "seasonId": 6502
+  },
+  "Formula Vee Series by trophi.ai - 2026 Season 4": {
+    "seriesId": 455,
+    "seasonId": 6489
+  },
+  "Global Endurance Tour - 2026 Season 4": {
+    "seriesId": 331,
+    "seasonId": 6483
+  },
+  "Global Mazda MX-5 Cup by Fanatec - 2026 Season 4": {
+    "seriesId": 139,
+    "seasonId": 6444
+  },
+  "Global Sports Car Challenge by Fanatec - 2026 Season 4": {
+    "seriesId": 210,
+    "seasonId": 6459
+  },
+  "GT Endurance Series by Simucube - 2026 Season 4": {
+    "seriesId": 237,
+    "seasonId": 6476
+  },
+  "GT Sprint Series by Simucube - 2026 Season 4": {
+    "seriesId": 228,
+    "seasonId": 6477
+  },
+  "GT3 Challenge Fixed by Fanatec - 2026 Season 4": {
+    "seriesId": 444,
+    "seasonId": 6478
+  },
+  "GT3 Regional Tour by SensitHaptics - Americas - 2026 Season 4": {
+    "seriesId": 595,
+    "seasonId": 6480
+  },
+  "GT3 Regional Tour by SensitHaptics - Europe - 2026 Season 4": {
+    "seriesId": 596,
+    "seasonId": 6481
+  },
+  "GT3 Regional Tour by SensitHaptics-Asia Pacific - 2026 Season 4": {
+    "seriesId": 594,
+    "seasonId": 6479
+  },
+  "GT4 Falken Tyre Challenge - 2026 Season 4": {
+    "seriesId": 491,
+    "seasonId": 6462
+  },
+  "GTE Sprint Series - 2026 Season 4": {
+    "seriesId": 535,
+    "seasonId": 6482
+  },
+  "IMSA Endurance Series - 2026 Season 4": {
+    "seriesId": 419,
+    "seasonId": 6486
+  },
+  "IMSA iRacing Series - Fixed by GO Fast - 2026 Season 4": {
+    "seriesId": 539,
+    "seasonId": 6488
+  },
+  "IMSA iRacing Series by GO Fast - 2026 Season 4": {
+    "seriesId": 447,
+    "seasonId": 6487
+  },
+  "IMSA Michelin Pilot Challenge - 2026 Season 4": {
+    "seriesId": 492,
+    "seasonId": 6465
+  },
+  "IMSA Sportscar Endurance Challenge - 2026 Season 4": {
+    "seriesId": 572,
+    "seasonId": 6466
+  },
+  "IMSA Vintage Series - 2026 Season 4": {
+    "seriesId": 285,
+    "seasonId": 6468
+  },
+  "Indy NXT Oval Series - Fixed - 2026 Season 4": {
+    "seriesId": 593,
+    "seasonId": 6505
+  },
+  "Indy NXT Road Series - Fixed - 2026 Season 4": {
+    "seriesId": 592,
+    "seasonId": 6504
+  },
+  "INDYCAR Series - 2026 Season 4": {
+    "seriesId": 133,
+    "seasonId": 6510
+  },
+  "INDYCAR Series - Fixed - 2026 Season 4": {
+    "seriesId": 165,
+    "seasonId": 6509
+  },
+  "INDYCAR Series - Oval - Fixed - 2026 Season 4": {
+    "seriesId": 132,
+    "seasonId": 6508
+  },
+  "iRacing DTM Series - 2026 Season": {
+    "seriesId": 619,
+    "seasonId": 6263
+  },
+  "iRacing Formula A - Grand Prix Tour - 2026 Season": {
+    "seriesId": 495,
+    "seasonId": 6235
+  },
+  "iRacing Lotus 79 Grand Prix Series- 2026 Season 4": {
+    "seriesId": 65,
+    "seasonId": 6507
+  },
+  "iRacing Porsche Cup - Fixed by CONSPIT - 2026 Season 4": {
+    "seriesId": 476,
+    "seasonId": 6474
+  },
+  "iRacing Porsche Cup by CONSPIT - 2026 Season 4": {
+    "seriesId": 299,
+    "seasonId": 6473
+  },
+  "iRX Volkswagen Beetle Lite Series - 2026 Season 4": {
+    "seriesId": 460,
+    "seasonId": 6570
+  },
+  "Jr Open Wheel Oval Challenge - 2026 Season 4": {
+    "seriesId": 563,
+    "seasonId": 6492
+  },
+  "Legends Cup by Go Motorsports Shop - 2026 Season 4": {
+    "seriesId": 32,
+    "seasonId": 6531
+  },
+  "Legends Road Cup by Go Motorsports Shop - 2026 Season 4": {
+    "seriesId": 562,
+    "seasonId": 6447
+  },
+  "LMP2 Challenge - 2026 Season 4 - Fixed": {
+    "seriesId": 591,
+    "seasonId": 6484
+  },
+  "LMP3 Trophy - 2026 Season 4": {
+    "seriesId": 525,
+    "seasonId": 6464
+  },
+  "Lotus 49 Grand Prix Legends - 2026 Season 4": {
+    "seriesId": 201,
+    "seasonId": 6506
+  },
+  "Micro Non Wing Sprint Car Rookie Series - 2026 Season 4": {
+    "seriesId": 558,
+    "seasonId": 6545
+  },
+  "Micro Winged Sprint Car Rookie by Thrustmaster - 2026 Season 4": {
+    "seriesId": 550,
+    "seasonId": 6544
+  },
+  "Mini Stock Rookie Series by Thrustmaster - 2026 Season 4": {
+    "seriesId": 564,
+    "seasonId": 6519
+  },
+  "Mission R Challenge - 2026 Season 4": {
+    "seriesId": 505,
+    "seasonId": 6453
+  },
+  "Motorsport UK FF 1600 Trophy by Thrustmaster - 2026 Season 4": {
+    "seriesId": 521,
+    "seasonId": 6493
+  },
+  "NASCAR 1987 Legends Cup - 2026 Season 4 Fixed": {
+    "seriesId": 413,
+    "seasonId": 6536
+  },
+  "NASCAR Carburetor Cup - 2026 Season 4": {
+    "seriesId": 116,
+    "seasonId": 6517
+  },
+  "NASCAR Class A Series - 2026 Season 4": {
+    "seriesId": 58,
+    "seasonId": 6540
+  },
+  "NASCAR Class A Series - Fixed - 2026 Season 4 Fixed": {
+    "seriesId": 191,
+    "seasonId": 6541
+  },
+  "NASCAR Class C Series - Fixed - 2026 Season 4": {
+    "seriesId": 164,
+    "seasonId": 6534
+  },
+  "NASCAR Euro Series 2026 Season 4": {
+    "seriesId": 620,
+    "seasonId": 6451
+  },
+  "NASCAR Gen 4 Cup Series - 2026 Season 4 Fixed": {
+    "seriesId": 524,
+    "seasonId": 6535
+  },
+  "NASCAR Gen 4 Grand National Series - 2026 Season 4 Fixed": {
+    "seriesId": 624,
+    "seasonId": 6577
+  },
+  "NASCAR iRacing Class B Series Series - 2026 Season 4": {
+    "seriesId": 62,
+    "seasonId": 6770
+  },
+  "NASCAR iRacing Class C Series Series - 2026 Season 4": {
+    "seriesId": 47,
+    "seasonId": 6769
+  },
+  "NASCAR iRacing Series - 2026 Season Fixed": {
+    "seriesId": 207,
+    "seasonId": 6081
+  },
+  "NASCAR iRacing Series - 2026 Season Open": {
+    "seriesId": 229,
+    "seasonId": 6080
+  },
+  "NASCAR Modified Tour - 2026 Season Fixed": {
+    "seriesId": 575,
+    "seasonId": 6076
+  },
+  "NASCAR O'Reilly Auto Parts Series - Fixed - 2026 Season 4": {
+    "seriesId": 103,
+    "seasonId": 6537
+  },
+  "NASCAR Pickup Cup - 2026 Season 4": {
+    "seriesId": 259,
+    "seasonId": 6516
+  },
+  "NASCAR Tour Modified Series - 2026 Season 4": {
+    "seriesId": 102,
+    "seasonId": 6529
+  },
+  "NASCAR Tour Modified Series - Fixed - 2026 Season 4 - Fixed": {
+    "seriesId": 417,
+    "seasonId": 6530
+  },
+  "Nurburgring Endurance Championship - 2026 Season": {
+    "seriesId": 275,
+    "seasonId": 6236
+  },
+  "Outlaw Micro Showdown - 2026 Season 4": {
+    "seriesId": 553,
+    "seasonId": 6550
+  },
+  "Porsche Esports Supercup Global Open Qualifiers": {
+    "seriesId": 472,
+    "seasonId": 6264
+  },
+  "Pro 2 Lite Off-Road Rookie Series - 2026 Season 4": {
+    "seriesId": 462,
+    "seasonId": 6573
+  },
+  "Pro 2 Off-Road Series - Fixed - 2026 Season 4": {
+    "seriesId": 464,
+    "seasonId": 6576
+  },
+  "Pro 4 Off-Road Series - Fixed - 2026 Season 4": {
+    "seriesId": 463,
+    "seasonId": 6575
+  },
+  "Production Car Challenge by Sim-Lab - 2026 Season 4": {
+    "seriesId": 112,
+    "seasonId": 6449
+  },
+  "Production Endurance Challenge - 2026 Season 4": {
+    "seriesId": 584,
+    "seasonId": 6450
+  },
+  "Proto-GT Challenge 2026 Season 4": {
+    "seriesId": 432,
+    "seasonId": 6475
+  },
+  "Prototype Challenge - 2026 Season 4 - Fixed": {
+    "seriesId": 457,
+    "seasonId": 6485
+  },
+  "Radical Esports Cup - 2026 Season 4": {
+    "seriesId": 74,
+    "seasonId": 6467
+  },
+  "Rain Master Challenge by Podium 1 - 2026 Season 4": {
+    "seriesId": 559,
+    "seasonId": 6455
+  },
+  "Rallycross Series - 2026 Season 4": {
+    "seriesId": 325,
+    "seasonId": 6571
+  },
+  "Rallycross Series - Fixed - 2026 Season 4": {
+    "seriesId": 461,
+    "seasonId": 6572
+  },
+  "Ring Meister by LVRY - 2026 Season 4": {
+    "seriesId": 526,
+    "seasonId": 6454
+  },
+  "Rookie Legends Cup by Simshop - 2026 Season 4": {
+    "seriesId": 483,
+    "seasonId": 6518
+  },
+  "Rookie Street Stock Series by Fanatec - 2026 Season 4 Fixed": {
+    "seriesId": 182,
+    "seasonId": 6520
+  },
+  "SCCA Runoffs - Formula Vee - 2026 Season 4": {
+    "seriesId": 506,
+    "seasonId": 6771
+  },
+  "SCCA Runoffs - Global MX-5 Spec Miata - 2026 Season 4": {
+    "seriesId": 508,
+    "seasonId": 6773
+  },
+  "SCCA Runoffs - GT4 - 2026 Season 4": {
+    "seriesId": 511,
+    "seasonId": 6775
+  },
+  "SCCA Runoffs - Renault Clio - 2026 Season 4": {
+    "seriesId": 545,
+    "seasonId": 6776
+  },
+  "SCCA Runoffs - Spec Racer Ford - 2026 Season 4": {
+    "seriesId": 507,
+    "seasonId": 6772
+  },
+  "SCCA Runoffs - USF2000 - 2026 Season 4": {
+    "seriesId": 510,
+    "seasonId": 6774
+  },
+  "Silver Crown Cup - 2026 Season 4": {
+    "seriesId": 53,
+    "seasonId": 6538
+  },
+  "SK Modified Series - 2026 Season 4 - Fixed": {
+    "seriesId": 441,
+    "seasonId": 6526
+  },
+  "SK Modified Weekly Series - 2026 Season 4": {
+    "seriesId": 45,
+    "seasonId": 6525
+  },
+  "Skip Barber Race Series - 2026 Season 4": {
+    "seriesId": 34,
+    "seasonId": 6494
+  },
+  "Spec Racer Ford Challenge - 2026 Season 4": {
+    "seriesId": 63,
+    "seasonId": 6458
+  },
+  "Sports Car Challenge by Falken Tyre - 2026 Season 4": {
+    "seriesId": 502,
+    "seasonId": 6463
+  },
+  "Sprint Car Cup - 2026 Season 4": {
+    "seriesId": 131,
+    "seasonId": 6539
+  },
+  "SRX Series - Fixed - 2026 Season 4": {
+    "seriesId": 554,
+    "seasonId": 6524
+  },
+  "Stock Car Brasil - 2026 Season 4": {
+    "seriesId": 493,
+    "seasonId": 6469
+  },
+  "Street Stock Series by Next Level Racing - 2026 Season 4": {
+    "seriesId": 190,
+    "seasonId": 6528
+  },
+  "Super Late Model Series - 2026 Season 4": {
+    "seriesId": 223,
+    "seasonId": 6532
+  },
+  "Super Late Model Series - 2026 Season 4 - Fixed": {
+    "seriesId": 416,
+    "seasonId": 6533
+  },
+  "Super Late Model Tour - 2026 Season Fixed": {
+    "seriesId": 574,
+    "seasonId": 6077
+  },
+  "Supercars Series - 2026 Season 4": {
+    "seriesId": 399,
+    "seasonId": 6471
+  },
+  "Supercars Series - Australian Servers - 2026 Season 4": {
+    "seriesId": 405,
+    "seasonId": 6472
+  },
+  "TCR Virtual Challenge - 2026 Season 4": {
+    "seriesId": 503,
+    "seasonId": 6461
+  },
+  "TCR Virtual Challenge - Fixed - 2026 Season 4": {
+    "seriesId": 430,
+    "seasonId": 6460
+  },
+  "Toyota GR86 Cup by SIMAGIC - 2026 Season 4": {
+    "seriesId": 514,
+    "seasonId": 6446
+  },
+  "Track Day - 2026 Season 4": {
+    "seriesId": 634,
+    "seasonId": 6616
+  },
+  "US Open Wheel D - USF 2000 Series - 2026 Season 4 - Fixed": {
+    "seriesId": 443,
+    "seasonId": 6491
+  },
+  "USAC 360 Sprint Car Series - 2026 Season 4": {
+    "seriesId": 310,
+    "seasonId": 6556
+  },
+  "Vintage Grand Prix Tour - 2026 Season": {
+    "seriesId": 579,
+    "seasonId": 6261
+  },
+  "VW Lite iRX Rookie Series - 2026 Season 4": {
+    "seriesId": 459,
+    "seasonId": 6569
+  },
+  "Winter iRacing NASCAR 87 Series - 2026 Season": {
+    "seriesId": 637,
+    "seasonId": 6767
+  },
+  "Winter iRacing NASCAR Gen 4 Cup Series - 2026 Season": {
+    "seriesId": 638,
+    "seasonId": 6766
+  },
+  "World of Outlaws Late Model Series - 2026 Season 4": {
+    "seriesId": 308,
+    "seasonId": 6566
+  },
+  "World of Outlaws Late Model Series - 2026 Season 4 - Fixed": {
+    "seriesId": 369,
+    "seasonId": 6567
+  },
+  "World of Outlaws Pro Qualifying Series - 2026 Season - Lates": {
+    "seriesId": 570,
+    "seasonId": 6622
+  },
+  "World of Outlaws Sprint Car Series - 2026 Season 4": {
+    "seriesId": 307,
+    "seasonId": 6563
+  },
+  "World of Outlaws Sprint Car Series - 2026 Season 4 - Fixed": {
+    "seriesId": 458,
+    "seasonId": 6564
+  }
+}

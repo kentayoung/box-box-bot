@@ -73,10 +73,11 @@ describe('formatThisWeek', () => {
   const schedule = (entries: WeeklyEntry[]): WeeklySchedule => ({ season: '2026 Season 4', week: 8, start: utc('2026-11-03'), entries });
 
   it('prints the header and one heading per category', () => {
-    const text = formatThisWeek(schedule([entry('Mazda', 'Sports Car'), entry('BMW', 'Sports Car'), entry('Tour', 'Endurance')]));
-    expect(text.startsWith('# 2026 Season 4 Week 8\n## Nov 3 – Nov 9')).toBe(true);
-    expect(text.match(/### Sports Car/g)).toHaveLength(1);
-    expect(text).toContain('### Endurance');
+    const embed = formatThisWeek(schedule([entry('Mazda', 'Sports Car'), entry('BMW', 'Sports Car'), entry('Tour', 'Endurance')]));
+    expect(embed.title).toBe('2026 Season 4 Week 8');
+    expect(embed.description.startsWith('Nov 3 – Nov 9')).toBe(true);
+    expect(embed.description.match(/__\*\*Sports Car\*\*__/g)).toHaveLength(1);
+    expect(embed.description).toContain('__**Endurance**__');
   });
 
   it('lists series alphabetically within each category', () => {
@@ -85,7 +86,7 @@ describe('formatThisWeek', () => {
       entry('BMW', 'Sports Car'),
       entry('Tour', 'Endurance'),
       entry('Aston Martin', 'Endurance'),
-    ]));
+    ])).description;
     expect(text.indexOf('**BMW**')).toBeLessThan(text.indexOf('**Mazda**'));
     expect(text.indexOf('**Aston Martin**')).toBeLessThan(text.indexOf('**Tour**'));
   });
@@ -93,8 +94,8 @@ describe('formatThisWeek', () => {
   it('shows cars in bold italic and race times as subtext', () => {
     const text = formatThisWeek(
       schedule([entry('Tour', 'Endurance', { start: utc('2026-11-07'), cars: 'Mercedes-AMG GT3 2020, Ferrari 296 GT3', races: 'Races Saturday at 7 GMT' })]),
-    );
-    expect(text).toContain('**Tour**: Lime Rock Park · ***GT3***\n-# Sat 12am MT');
+    ).description;
+    expect(text).toContain('**Tour**: Lime Rock Park · ***GT3***\nSat 12am MT');
   });
 
   it('labels endurance entries as team or solo', () => {
@@ -106,16 +107,24 @@ describe('formatThisWeek', () => {
         entry('Required', 'Endurance', { team: true, minDrivers: 2 }),
         entry('Mazda', 'Sports Car'),
       ]),
-    );
-    expect(text).toContain('-# Team · Sat 12am MT');
-    expect(text).toContain('**Optional**: Lime Rock Park\n-# Team (1+)');
-    expect(text).toContain('**Required**: Lime Rock Park\n-# Team (2+)');
-    expect(text).toContain('**Challenge**: Lime Rock Park\n-# Solo');
-    expect(text).not.toMatch(/\*\*Mazda\*\*: Lime Rock Park\n-#/);
+    ).description;
+    expect(text).toContain('\nTeam · Sat 12am MT');
+    expect(text).toContain('**Optional**: Lime Rock Park\nTeam (1+)');
+    expect(text).toContain('**Required**: Lime Rock Park\nTeam (2+)');
+    expect(text).toContain('**Challenge**: Lime Rock Park\nSolo');
+    expect(text).toMatch(/\*\*Mazda\*\*: Lime Rock Park$/);
   });
 
-  it('stays under the Discord message limit', () => {
-    const many = Array.from({ length: 80 }, (_, index) => entry(`Series number ${index}`, 'Sports Car', { track: 'A fairly long track name here' }));
-    expect(formatThisWeek(schedule(many)).length).toBeLessThanOrEqual(2000);
+  it('links series that have a known season id', () => {
+    const text = formatThisWeek(
+      schedule([entry('Toyota GR86 Cup', 'Sports Car', { name: 'Toyota GR86 Cup by SIMAGIC - 2026 Season 4' }), entry('Mazda', 'Sports Car')]),
+    ).description;
+    expect(text).toContain('**[Toyota GR86 Cup](https://members-ng.iracing.com/web/racing/official/series-list/6446/go-racing)**: Lime Rock Park');
+    expect(text).toContain('**Mazda**: Lime Rock Park');
+  });
+
+  it('stays under the Discord embed description limit', () => {
+    const many = Array.from({ length: 160 }, (_, index) => entry(`Series number ${index}`, 'Sports Car', { track: 'A fairly long track name here' }));
+    expect(formatThisWeek(schedule(many)).description.length).toBeLessThanOrEqual(4096);
   });
 });
